@@ -8,7 +8,7 @@
 (define SYSTEM_RULE_APPLY      '@apply)
 (define SYSTEM_RULE_CALLCC     '@call/cc)
 
-(define (system-rule? ctx s)
+(define (rule? ctx env s)
   (and (symbol? s)
        (or (eq? s SYSTEM_RULE_SET)
            (eq? s SYSTEM_RULE_LAMBDA)
@@ -17,5 +17,5 @@
            (eq? s SYSTEM_RULE_IF)
            (eq? s SYSTEM_RULE_APPLY)
            (eq? s SYSTEM_RULE_CALLCC)
-           (ctx 'system-rule? s)
+           (ctx 'rule? env s)
            )))

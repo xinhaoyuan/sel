@@ -23,13 +23,10 @@
        (call-with-rebinding
         env (car input)
         (lambda (head-env head)
-          (if (system-rule? ctx head)
-              (parse-system-rule ctx env exps head (cdr input))
-              (let ((result (env-lookup head-env head)))
-                (if (and result (eq? (binding-meta result) 'rule))
-                    (parse-eval ctx env exps (apply-rule ctx env (binding-value result) (cdr input)))
-                    (parse-system-rule ctx env exps SYSTEM_RULE_APPLY input)))
-              ))))
+          (if (rule? ctx env head)
+              (parse-rule ctx env exps head (cdr input))
+              (parse-rule ctx env exps SYSTEM_RULE_APPLY input)))
+              ))
 
       (else
        (ctx 'error "Unknown expression to parse")))
@@ -47,7 +44,7 @@
         (exp-localref-new exps (car (binding-value result)) (cdr (binding-value result)))
         (exp-globalref-new exps (symbol->string var-sym)))))
   
-(define (parse-system-rule
+(define (parse-rule
          ctx
          env
          exps
@@ -168,7 +165,7 @@
         (ctx 'error "syntax error on ``call/cc''")))
 
    (else
-    (ctx 'parse-system-rule env exps head input))
+    (ctx 'parse-rule env exps head input))
    ))
 
 (define (unit-test-parse)

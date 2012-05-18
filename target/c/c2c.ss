@@ -22,7 +22,10 @@
     (cond
      ((eq? type 'integer)
       (list "INTEGER(context," value ")"))
-     
+
+     ((eq? type 'number)
+      (list "NUMBER(context," value ")"))
+
      ((eq? type 'string)
       (list "STRING(context," (quote-string value) ")"))
 
@@ -68,7 +71,7 @@
      ;;  "OBJECT_NULL")
 
      (else
-      (begin (display "unknown value to represent") (display value) (newline)))
+      (begin (display "unknown value to represent ") (display type) (display " ") (display value) (newline)))
      )))
 
 (define (c2c ctx c2c-context main-name exps id)
