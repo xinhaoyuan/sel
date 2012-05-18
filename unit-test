@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! "$#" = 1 ]
-then for i in deque flex-vector plist env exp parse; do $0 $i; done
+then for i in deque flex-vector plist env exp parse c2c; do $0 $i; done
 else
     scm -l "wrapper.ss" -c "(unit-test-$1)"
     # mzscheme -f "wrapper.ss" -e "(unit-test-$1)"
