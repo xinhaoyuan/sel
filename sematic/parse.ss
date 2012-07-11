@@ -172,22 +172,22 @@
 
   (let ((input '(@lambda (a) (@set! a b)))
         (exps   (make-exp-pool)))
-    (display (exp-dump exps (parse-eval (make-test-ctx) system-env exps input)))
+    (display (exp-dump exps (parse-eval system-ctx system-env exps input)))
     (newline))
 
   (let ((input '(@with (a) (a b)))
         (exps   (make-exp-pool)))
-    (display (exp-dump exps (parse-eval (make-test-ctx) system-env exps input)))
+    (display (exp-dump exps (parse-eval system-ctx system-env exps input)))
     (newline))
 
   (let ((input '(@lambda (a) (@if a b c)))
         (exps   (make-exp-pool)))
-    (display (exp-dump exps (parse-eval (make-test-ctx) system-env exps input)))
+    (display (exp-dump exps (parse-eval system-ctx system-env exps input)))
     (newline))
 
   (let ((input '(@begin (a) (@if a b c)))
         (exps   (make-exp-pool)))
-    (display (exp-dump exps (parse-eval (make-test-ctx) system-env exps input)))
+    (display (exp-dump exps (parse-eval system-ctx system-env exps input)))
     (newline))
   
   )

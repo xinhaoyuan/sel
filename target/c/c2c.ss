@@ -236,7 +236,7 @@
 
 (define (unit-test-c2c)
   (let ((test (lambda (input)
-                (let ((ctx (make-test-ctx))
+                (let ((ctx system-ctx)
                       (c2c-ctx (make-c2c-context))
                       (exps (make-exp-pool))
                       (id #f)

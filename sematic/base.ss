@@ -19,3 +19,18 @@
            (eq? s SYSTEM_RULE_CALLCC)
            (ctx 'rule? env s)
            )))
+
+(define (make-fundamental-context)
+  (lambda (op . args)
+    (cond
+     
+     ((eq? op 'error)
+      (display (car args)) (newline))
+
+     ((eq? op 'rule?) #f)
+
+     (else
+      (begin
+        (display "CTX: ") (display op) (display " ") (display args) (newline)
+        #f))
+     )))

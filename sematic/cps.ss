@@ -110,7 +110,7 @@
      )))
 
 (define (unit-test-cps)
-  (let ((ctx (make-test-ctx)))
+  (let ((ctx system-ctx))
     
     (let ((exps (make-exp-pool)))
       (display (exp-dump
