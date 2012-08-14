@@ -147,7 +147,12 @@
     (let ((exps (make-exp-pool)))
       (display (exp-dump
                 exps
-                (cps-eval ctx exps (exp-if-new exps (exp-localref-new exps 0 0) (exp-localref-new exps 1 1) (exp-constant-new exps 'foo "bar")) EXP_NULL)))
+                (cps-eval ctx exps
+                          (exp-if-new exps
+                                      (exp-localref-new exps 0 0)
+                                      (exp-localref-new exps 1 1)
+                                      (exp-constant-new exps 'foo "bar"))
+                          EXP_NULL)))
       (newline))
 
     (let ((exps (make-exp-pool)))
