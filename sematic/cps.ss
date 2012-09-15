@@ -7,15 +7,18 @@
     (cond
      
      ((or (eq? type EXP_TYPE_GOTO)
-          (eq? type EXP_TYPE_SETANDGOTO))
+          (eq? type EXP_TYPE_SETANDGOTO)
+          (eq? type EXP_TYPE_REFANDGOTO))
       id)
 
      ((or (eq? type EXP_TYPE_CONSTANT)
-          (eq? type EXP_TYPE_GLOBALREF)
           (eq? type EXP_TYPE_LOCALREF)
           (eq? type EXP_TYPE_LABEL))
-
       (exp-goto-new exps 2 (vector cont id)))
+
+     ((eq? type EXP_TYPE_GLOBALREF)
+      (exp-refandgoto-new exps id cont))
+
 
      ((eq? type EXP_TYPE_SET)
       (let ((ncont (exp-label-new exps 0 1)))

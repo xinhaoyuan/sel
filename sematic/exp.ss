@@ -3,18 +3,19 @@
 
 (define EXP_TYPE_GOTO             0)
 (define EXP_TYPE_SETANDGOTO       1)
-(define EXP_TYPE_CONSTANT         2)
-(define EXP_TYPE_LOCALREF         3)
-(define EXP_TYPE_GLOBALREF        4)
-(define EXP_TYPE_LABEL            5)
-(define EXP_TYPE_SET              6)
-(define EXP_TYPE_LAMBDA           7)
-(define EXP_TYPE_BEGIN            8)
-(define EXP_TYPE_WITH             9)
-(define EXP_TYPE_IF               10)
-(define EXP_TYPE_APPLY            11)
-(define EXP_TYPE_CALLCC           12)
-
+(define EXP_TYPE_REFANDGOTO       2)
+(define EXP_TYPE_CONSTANT         3)
+(define EXP_TYPE_LOCALREF         4)
+(define EXP_TYPE_GLOBALREF        5)
+(define EXP_TYPE_LABEL            6)
+(define EXP_TYPE_SET              7)
+(define EXP_TYPE_LAMBDA           8)
+(define EXP_TYPE_BEGIN            9)
+(define EXP_TYPE_WITH             10)
+(define EXP_TYPE_IF               11)
+(define EXP_TYPE_APPLY            12)
+(define EXP_TYPE_CALLCC           13)
+  
 (define EXP_FIELD_TYPE            0)
 
 (define EXP_NULL                  -1)
@@ -37,6 +38,11 @@
           (exp-pool-traverse exps (exp-setandgoto-ref-get exps id) proc)
           (exp-pool-traverse exps (exp-setandgoto-val-get exps id) proc)
           (exp-pool-traverse exps (exp-setandgoto-cont-get exps id) proc) 
+          )
+
+         ((eq? type EXP_TYPE_REFANDGOTO)
+          (exp-pool-traverse exps (exp-refandgoto-ref-get exps id) proc)
+          (exp-pool-traverse exps (exp-refandgoto-cont-get exps id) proc) 
           )
 
          ((eq? type EXP_TYPE_LABEL)
@@ -120,6 +126,20 @@
   (vector-ref (flex-vector-ref exps id) EXP_FIELD_SETANDGOTO_CONT))
 (define (exp-setandgoto-cont-set! exps id cont)
   (vector-set! (flex-vector-ref exps id) EXP_FIELD_SETANDGOTO_CONT cont))
+
+(define EXP_FIELD_REFANDGOTO_REF  1)
+(define EXP_FIELD_REFANDGOTO_CONT 2)
+
+(define (exp-refandgoto-new exps ref cont)
+  (exp-new exps (vector EXP_TYPE_REFANDGOTO ref cont)))
+(define (exp-refandgoto-ref-get exps id)
+  (vector-ref (flex-vector-ref exps id) EXP_FIELD_REFANDGOTO_REF))
+(define (exp-refandgoto-ref-set! exps id ref)
+  (vector-set! (flex-vector-ref exps id) EXP_FIELD_REFANDGOTO_REF ref))
+(define (exp-refandgoto-cont-get exps id)
+  (vector-ref (flex-vector-ref exps id) EXP_FIELD_REFANDGOTO_CONT))
+(define (exp-refandgoto-cont-set! exps id cont)
+  (vector-set! (flex-vector-ref exps id) EXP_FIELD_REFANDGOTO_CONT cont))
 
 (define EXP_FIELD_CONSTANT_TYPE   1)
 (define EXP_FIELD_CONSTANT_VAL    2)
@@ -309,6 +329,15 @@
                  (exp-dump exps (exp-setandgoto-cont-get exps id)) ")"
                  )))
 
+         ((eq? (exp-type exps id) EXP_TYPE_REFANDGOTO)
+          (set! result
+                (string-append
+                 result
+                 "(ref-and-goto "
+                 (exp-dump exps (exp-refandgoto-ref-get exps id)) " "
+                 (exp-dump exps (exp-refandgoto-cont-get exps id)) ")"
+                 )))
+
          ((eq? (exp-type exps id) EXP_TYPE_CONSTANT)
           (set! result (string-append
                         result "[constant]")))
@@ -412,6 +441,7 @@
   (let ((exps (make-exp-pool)))
     (display (exp-dump exps (exp-goto-new exps 2 (vector EXP_NULL EXP_NULL)))) (newline)
     (display (exp-dump exps (exp-setandgoto-new exps EXP_NULL EXP_NULL EXP_NULL))) (newline)
+    (display (exp-dump exps (exp-refandgoto-new exps EXP_NULL EXP_NULL))) (newline)
     (display (exp-dump exps (exp-constant-new exps 'string "string"))) (newline)
     (display (exp-dump exps (exp-localref-new exps EXP_NULL 0))) (newline)
     (display (exp-dump exps (exp-globalref-new exps "global_var"))) (newline)
