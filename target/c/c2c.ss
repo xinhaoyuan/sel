@@ -3,7 +3,7 @@
 
 (define c2c-head-string
   "\
-#include <execution.h>
+#include <sel_execution.h>
 ")
 (define c2c-tail-string "")
 
@@ -20,16 +20,16 @@
         (value (exp-constant-val-get exps id)))
     (cond
      ((eq? type 'integer)
-      (list "SEE_MAKE_INTEGER(execution," value ")"))
+      (list "SEE_SEL_MAKE_INTEGER(execution," value ")"))
 
      ((eq? type 'number)
-      (list "SEE_MAKE_NUMBER(execution," value ")"))
+      (list "SEE_SEL_MAKE_NUMBER(execution," value ")"))
 
      ((eq? type 'symbol)
-      (list "SEE_MAKE_STRING_SYMBOL(execution," (quote-string (symbol->string value)) ")"))
+      (list "SEE_SEL_MAKE_STRING_SYMBOL(execution," (quote-string (symbol->string value)) ")"))
 
      ((eq? type 'boolean)
-      (list "SEE_MAKE_BOOLEAN_" (if value "TRUE" "FALSE") "(execution)"))
+      (list "SEE_SEL_MAKE_BOOLEAN_" (if value "TRUE" "FALSE") "(execution)"))
 
      ;; ((pair? value)
      ;;  (let recur ((count 0)
@@ -116,13 +116,12 @@
                       ))
 
                    ((eq? type EXP_TYPE_GLOBALREF)
-                    (list "GLOBALREF(execution," (string-quote (exp-globalref-name-get exps id)) ")")
-                    )
+                    (ctx 'error "cannot process globalref exp directly"))
                    
                    ((eq? type EXP_TYPE_LOCALREF)
                     (let ((base (exp-localref-base-get exps id))
                           (offset (exp-localref-offset-get exps id)))
-                      (list "see_local_ref(execution,"
+                      (list "see_sel_local_ref(execution,"
                             (- current-depth (vector-ref exp-depth base)) ","
                             (- offset
                                (cond
@@ -149,7 +148,7 @@
                       (if (> (exp-label-argsize-get exps id) 0)
                           (set! current-depth (- current-depth 1)))
                       (set! offset-stack (cdr offset-stack))
-                      (list "see_label_new(execution,label_" offset "," (exp-label-argsize-get exps id) ")")
+                      (list "see_sel_label_new(execution,label_" offset "," (exp-label-argsize-get exps id) ")")
                       )
                     )
 
@@ -158,7 +157,7 @@
                       (set! current-depth (+ current-depth 1))
                       (vector-set! exp-depth id current-depth)
                       (let ((result
-                             (list "do{if(see_with(execution," (exp-with-argsize-get exps id) ") == 0){\n"
+                             (list "do{if(see_sel_with(execution," (exp-with-argsize-get exps id) ") == 0){\n"
                                    (c2c-internal (exp-with-body-get exps id)) ";}}while(0)")))
                         (set! current-depth (- current-depth 1))
                         result)
@@ -167,7 +166,7 @@
                    ((eq? type EXP_TYPE_GOTO)
                     (let ((writer (make-plist-writer)))
                       (writer 'push-level!)
-                      (writer 'write! "see_goto(execution")
+                      (writer 'write! "see_sel_goto(execution")
                       
                       (let recur ((i 0))
                         (if (< i (exp-goto-argc-get exps id))
@@ -186,7 +185,7 @@
                       (if (eq? (exp-type exps ref) EXP_TYPE_LOCALREF)
                           (let ((base (exp-localref-base-get exps ref))
                                 (offset (exp-localref-offset-get exps ref)))
-                            (list "see_set_and_goto(execution,"
+                            (list "see_sel_set_and_goto(execution,"
                                   (- current-depth (vector-ref exp-depth base)) ","
                                   (- offset
                                      (cond
@@ -198,13 +197,13 @@
                                        (ctx 'error "cannot process base exp for local ref")))) ","
                                        (c2c-internal (exp-setandgoto-val-get exps id)) ","
                                        (c2c-internal (exp-setandgoto-cont-get exps id)) ")"))
-                          (list "see_global_set_and_goto(execution,"
+                          (list "see_sel_global_set_and_goto(execution,"
                                 (string-quote (exp-globalref-name-get exps ref)) ","
                                 (c2c-internal (exp-setandgoto-val-get exps id)) ","
                                 (c2c-internal (exp-setandgoto-cont-get exps id)) ")"))))
 
                    ((eq? type EXP_TYPE_REFANDGOTO)
-                    (list "see_global_ref_and_goto(execution,"
+                    (list "see_sel_global_ref_and_goto(execution,"
                           (string-quote (exp-globalref-name-get exps (exp-refandgoto-ref-get exps id))) ","
                           (c2c-internal (exp-refandgoto-cont-get exps id)) ")"))
 
@@ -229,9 +228,9 @@
                        (define-result '()))
        (if (> count 0)
            (after-recur (- count 1)
-                        (cons (list "static void label_" (+ count label-start -1) "(see_execution_t execution);\n")
+                        (cons (list "static void label_" (+ count label-start -1) "(see_sel_execution_t execution);\n")
                               declare-result)
-                        (cons (list "static void label_" (+ count label-start -1) "(see_execution_t execution) {\n"
+                        (cons (list "static void label_" (+ count label-start -1) "(see_sel_execution_t execution) {\n"
                                     ;; process for constants
                                     (let inner-recur ((clist (vector-ref label-constant-vec (+ count -1)))
                                                       (result '())
@@ -256,11 +255,11 @@
                   declare-result "\n" define-result "\n"
                   "int " main-name "(void) {
 see_object_sys_init();
-see_execution_sys_init();
-see_execution_t execution = see_execution_new();
-see_goto(execution,see_label_new(execution,label_" label-start ",0),NULL);
-see_run(execution);
-see_execution_free(execution);
+see_sel_execution_sys_init();
+see_sel_execution_t execution = see_sel_execution_new();
+see_sel_goto(execution,see_sel_label_new(execution,label_" label-start ",0),NULL);
+see_sel_run(execution);
+see_sel_execution_free(execution);
 return 0;
 }"
                   (c2c-context-dump c2c-context)
