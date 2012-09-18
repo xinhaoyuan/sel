@@ -208,9 +208,9 @@
                           (c2c-internal (exp-refandgoto-cont-get exps id)) ")"))
 
                    ((eq? type EXP_TYPE_IF)
-                    (list "((IS_TRUE(" (c2c-internal (exp-if-cond-get exps id)) "))?"
-                          (c2c-internal (exp-if-then-get exps id)) ":"
-                          (c2c-internal (exp-if-else-get exps id)) ")"))
+                    (list "do{if(SEE_SEL_IS_TRUE(" (c2c-internal (exp-if-cond-get exps id)) "))"
+                          (c2c-internal (exp-if-then-get exps id)) ";else "
+                          (c2c-internal (exp-if-else-get exps id)) ";}while(0)"))
 
                    (else
                     (display type) (newline)
@@ -288,3 +288,15 @@ return 0;
 
     (display (test '(@with (a) (@begin (@set! a (@lambda () (a))) (a)))))
     ))
+
+(define (compile-c2c)
+  (let ((input (read))
+        (ctx system-ctx)
+        (c2c-ctx (make-c2c-context))
+        (exps (make-exp-pool))
+        (id #f))
+    (set! id (parse-eval ctx system-env exps input))
+    (set! id (cps-eval ctx exps id EXP_NULL))
+    (c2c ctx c2c-ctx "main" exps id)
+    (display (c2c-context-dump c2c-ctx)))
+  )

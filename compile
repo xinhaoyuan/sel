@@ -1,0 +1,3 @@
+#!/bin/sh
+
+scm -l "wrapper.ss" -c "(compile-c2c)"
