@@ -3,7 +3,7 @@
 
 (define c2c-head-string
   "\
-#include <sel_execution.h>
+#include <see/sel/execution.h>
 ")
 (define c2c-tail-string "")
 

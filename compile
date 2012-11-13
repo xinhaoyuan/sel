@@ -1,3 +1,6 @@
 #!/bin/sh
 
-scm -l "wrapper.ss" -c "(compile-c2c)"
+if [ -z "$1" ]; then echo "Usage $0 [source]"; exit 1; fi
+filename=`cd $(dirname $1); pwd`/$(basename $1)
+echo Compiling $filename
+cd $(dirname $0); scm -l "wrapper.ss" -c "(compile-c2c)" < $filename > $filename.c
