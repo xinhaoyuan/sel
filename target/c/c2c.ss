@@ -25,8 +25,8 @@
      ((eq? type 'number)
       (list "SEE_SEL_MAKE_NUMBER(execution," value ")"))
 
-     ((eq? type 'symbol)
-      (list "SEE_SEL_MAKE_STRING_SYMBOL(execution," (quote-string (symbol->string value)) ")"))
+     ((eq? type 'string)
+      (list "SEE_SEL_MAKE_STRING_SYMBOL(execution," (string-quote value) ")"))
 
      ((eq? type 'boolean)
       (list "SEE_SEL_MAKE_BOOLEAN_" (if value "TRUE" "FALSE") "(execution)"))

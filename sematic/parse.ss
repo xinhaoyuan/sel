@@ -15,6 +15,9 @@
 
       ((number? input)
        (exp-constant-new exps 'number input))
+
+      ((string? input)
+       (exp-constant-new exps 'string input))
       
       ((symbol? input)
        (parse-var-ref ctx env exps input))

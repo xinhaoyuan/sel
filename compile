@@ -1,9 +1,9 @@
 #!/bin/sh
 
 if [ -z "$1" ]; then echo "Usage $0 <input> [output]"; exit 1; fi
+if [ -z "$2" ]; then $2=$1.c; fi
 input=`cd $(dirname $1); pwd`/$(basename $1)
-output=$2
-if [ -z "$output" ]; then output=$input.c; fi
+output=`cd $(dirname $2); pwd`/$(basename $2)
 
 echo Compiling $input to $output
 cd $(dirname $0); scm -l "wrapper.ss" -c "(compile-c2c)" < $input > $output
