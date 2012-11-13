@@ -1,7 +1,15 @@
-#!/bin/sh
+#!/bin/bash
+
+if [ "$*" == "-u" ]; then update=yes; shift; fi
 
 if [ ! "$#" = 1 ]
-then for i in deque flex-vector plist env exp parse c2c; do $0 $i; done
+then
+    (for i in deque flex-vector plist env exp parse c2c; do $0 $i; done) > /tmp/sel-unit-test-result
+    if [ "$update" == "yes" ]; then
+        cp /tmp/sel-unit-test-result unit-test-result
+    else
+        diff /tmp/sel-unit-test-result unit-test-result
+    fi
 else
     scm -l "wrapper.ss" -c "(unit-test-$1)"
     # mzscheme -f "wrapper.ss" -e "(unit-test-$1)"

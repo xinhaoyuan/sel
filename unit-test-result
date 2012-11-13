@@ -1,0 +1,86 @@
+(3 2 1 0 -1 -2)
+(3 2 1 0 -1 -2 4 5 6)
+3 2 1 0 -1 -2 4 5 6 (3 6 9)
+#(1 3 2 5 7 4 () ())(1 2 (3 4) 5)
+123(4 5)
+45
+6#(a rule exit)
+#(a variable (0 . 1))
+#(a rule exit)
+#(b variable (2 . 3))
+#f
+#(a variable (5 . 6))
+#(a variable (5 . 6))
+#(a rule exit)
+#(b variable (4 . 5))
+#f
+0:(goto ? ?)
+1:(set-and-goto! ? ? ?)
+2:(ref-and-goto ? ?)
+3:[constant]
+4:[localref:-1,0]
+5:[globalref:global_var]
+6:(label [0:0] ?)
+7:(set! ? ?)
+8:(lambda [0:0] ?)
+9:(begin 0:(goto ? ?) 1:(set-and-goto! ? ? ?))
+10:(with [0:0] ?)
+11:(if 0:(goto ? ?) 1:(set-and-goto! ? ? ?) 2:(ref-and-goto ? ?))
+12:(apply ? ?)
+13:(call/cc 0:(goto ? ?))
+0:(lambda [0:1] 3:(set! 1:[localref:0,0] 2:[globalref:b]))
+0:(with [0:1] 3:(apply 1:[localref:0,0] 2:[globalref:b]))
+0:(lambda [0:1] 4:(if 1:[localref:0,0] 2:[globalref:b] 3:[globalref:c]))
+0:(begin 2:(apply 1:[globalref:a]) 6:(if 3:[globalref:a] 4:[globalref:b] 5:[globalref:c]))
+0:(with [0:1] 1:(begin 6:(set! 2:[localref:0,0] 3:(lambda [0:0] 5:(apply 4:[localref:0,0]))) 8:(apply 7:[localref:0,0])))
+
+0:(with [0:1] 36:(goto 21:(label [0:1] 23:(set-and-goto! 2:[localref:0,0] 22:[localref:21,0] 20:(label [0:0] 9:(with [0:1] 19:(goto 16:(label [0:1] 18:(set-and-goto! 12:[localref:9,0] 17:[localref:16,0] 15:(label [0:0] 11:(goto 14:[localref:9,0] ?)))) 7:[localref:0,0]))))) 3:(label [-1:1] 25:(with [0:1] 35:(goto 32:(label [0:1] 34:(set-and-goto! 28:[localref:25,0] 33:[localref:32,0] 31:(label [0:0] 27:(goto 30:[localref:25,0] 24:[localref:3,-1])))) 4:[localref:0,0])))))
+
+#include <see/sel/execution.h>
+
+static void label_0(see_sel_execution_t execution);
+static void label_1(see_sel_execution_t execution);
+static void label_2(see_sel_execution_t execution);
+static void label_3(see_sel_execution_t execution);
+static void label_4(see_sel_execution_t execution);
+static void label_5(see_sel_execution_t execution);
+static void label_6(see_sel_execution_t execution);
+static void label_7(see_sel_execution_t execution);
+
+static void label_0(see_sel_execution_t execution) {
+do{if(see_sel_with(execution,1) == 0){
+see_sel_goto(execution,see_sel_label_new(execution,label_1,1),see_sel_label_new(execution,label_5,1),NULL);}}while(0);
+}
+static void label_1(see_sel_execution_t execution) {
+see_sel_set_and_goto(execution,1,0,see_sel_local_ref(execution,0,0),see_sel_label_new(execution,label_2,0));
+}
+static void label_2(see_sel_execution_t execution) {
+do{if(see_sel_with(execution,1) == 0){
+see_sel_goto(execution,see_sel_label_new(execution,label_3,1),see_sel_local_ref(execution,2,0),NULL);}}while(0);
+}
+static void label_3(see_sel_execution_t execution) {
+see_sel_set_and_goto(execution,1,0,see_sel_local_ref(execution,0,0),see_sel_label_new(execution,label_4,0));
+}
+static void label_4(see_sel_execution_t execution) {
+see_sel_goto(execution,see_sel_local_ref(execution,1,0),SEE_OBJECT_NULL,NULL);
+}
+static void label_5(see_sel_execution_t execution) {
+do{if(see_sel_with(execution,1) == 0){
+see_sel_goto(execution,see_sel_label_new(execution,label_6,1),see_sel_local_ref(execution,2,0),NULL);}}while(0);
+}
+static void label_6(see_sel_execution_t execution) {
+see_sel_set_and_goto(execution,1,0,see_sel_local_ref(execution,0,0),see_sel_label_new(execution,label_7,0));
+}
+static void label_7(see_sel_execution_t execution) {
+see_sel_goto(execution,see_sel_local_ref(execution,1,0),see_sel_local_ref(execution,2,0),NULL);
+}
+
+int main(void) {
+see_object_sys_init();
+see_sel_execution_sys_init();
+see_sel_execution_t execution = see_sel_execution_new();
+see_sel_goto(execution,see_sel_label_new(execution,label_0,0),NULL);
+see_sel_run(execution);
+see_sel_execution_free(execution);
+return 0;
+}
